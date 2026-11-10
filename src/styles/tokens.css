@@ -1,0 +1,50 @@
+/*
+  Paleta del Colegio de Ciencias Jurídicas en Nuevo León, A.C.
+  Tomada del logo: anillo lila, trazo de tinta del monograma y fondo
+  blanco-lila. El ciruela y el oro vienen de los carteles del Colegio.
+*/
+:root {
+  /* Marca */
+  --lila: #a583c4; /* anillo del logo */
+  --lila-suave: #cdb8e0;
+  --lila-claro: #ebe2f3;
+  --lila-papel: #f8f4fb; /* fondo del logo */
+  --ciruela: #4a2a6b; /* títulos y acciones */
+  --ciruela-profundo: #2c1742;
+  --tinta: #1e1826; /* trazo del monograma */
+  --oro: #a37b2c; /* acento de los carteles, uso mínimo */
+  --blanco: #ffffff;
+
+  /* Roles */
+  --fondo: var(--lila-papel);
+  --superficie: var(--blanco);
+  --texto: var(--tinta);
+  --texto-suave: #564c63;
+  --borde: #dccfe8;
+  --accion: var(--ciruela);
+  --accion-hover: var(--ciruela-profundo);
+  --error: #a3243b;
+  --exito: #24643f;
+
+  /* Tipografía */
+  --fuente-titulo: 'Cormorant Garamond', 'Times New Roman', serif;
+  --fuente-texto: 'Mulish', system-ui, sans-serif;
+
+  --t-xs: 0.8125rem;
+  --t-s: 0.9375rem;
+  --t-m: 1.0625rem;
+  --t-l: 1.375rem;
+  --t-xl: 1.875rem;
+  --t-2xl: 2.625rem;
+  --t-3xl: clamp(2.75rem, 6vw, 4.5rem);
+
+  /* Espacio y forma */
+  --e-1: 0.5rem;
+  --e-2: 1rem;
+  --e-3: 1.5rem;
+  --e-4: 2.5rem;
+  --e-5: 4rem;
+  --e-6: 6.5rem;
+  --radio: 6px;
+  --ancho: 72rem;
+}

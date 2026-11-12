@@ -69,8 +69,8 @@ export default function Registro() {
 
   return (
     <MarcoAcceso
-      titulo="Solicitar afiliación"
-      entrada="Para abogadas tituladas. El Consejo Directivo revisa cada solicitud antes de activarla."
+      titulo="Solicitud de afiliación"
+      entrada="Dirigida a mujeres tituladas en Derecho con cédula profesional. El Consejo Directivo valida cada expediente antes de formalizar el alta."
     >
       <form className="forma" onSubmit={alEnviar} noValidate>
         {errorGeneral && (
@@ -78,7 +78,11 @@ export default function Registro() {
             {errorGeneral}
           </p>
         )}
-        <Campo etiqueta="Nombre completo" autoComplete="name" {...enlazar('nombre')} />
+        <Campo
+          etiqueta="Nombre completo (como consta en el título profesional)"
+          autoComplete="name"
+          {...enlazar('nombre')}
+        />
         <div className="forma__par">
           <Campo
             etiqueta="Correo electrónico"
@@ -87,29 +91,33 @@ export default function Registro() {
             {...enlazar('correo')}
           />
           <Campo
-            etiqueta="Teléfono"
+            etiqueta="Teléfono móvil"
             type="tel"
             inputMode="tel"
             autoComplete="tel"
-            ayuda="10 dígitos"
+            ayuda="10 dígitos sin espacios"
             {...enlazar('telefono')}
           />
         </div>
         <div className="forma__par">
           <Campo
-            etiqueta="Cédula profesional"
+            etiqueta="Número de cédula profesional"
             inputMode="numeric"
-            ayuda="Licenciatura en Derecho"
+            ayuda="Licenciatura en Derecho (7 u 8 dígitos)"
             {...enlazar('cedula')}
           />
-          <Campo etiqueta="Área de práctica" opciones={areasDePractica} {...enlazar('area')} />
+          <Campo
+            etiqueta="Rama principal de práctica"
+            opciones={areasDePractica}
+            {...enlazar('area')}
+          />
         </div>
         <div className="forma__par">
           <Campo
-            etiqueta="Contraseña"
+            etiqueta="Crear contraseña"
             type="password"
             autoComplete="new-password"
-            ayuda="Al menos 8 caracteres"
+            ayuda="Mínimo 8 caracteres"
             {...enlazar('contrasena')}
           />
           <Campo
@@ -129,7 +137,9 @@ export default function Registro() {
             onChange={(e) => setValores((v) => ({ ...v, acepta: e.target.checked }))}
           />
           <label htmlFor="acepta">
-            Acepto que el Colegio use mis datos para gestionar mi afiliación.
+            Manifiesto bajo protesta de decir verdad que los datos proporcionados son verídicos y
+            autorizo al Colegio su tratamiento exclusivo para el trámite de afiliación y vida
+            gremial.
           </label>
           {errores.acepta && (
             <span className="error" id="acepta-error">
@@ -138,11 +148,12 @@ export default function Registro() {
           )}
         </div>
         <button className="boton boton--ancho" type="submit" disabled={enviando}>
-          {enviando ? 'Enviando solicitud…' : 'Enviar solicitud'}
+          {enviando ? 'Registrando solicitud…' : 'Presentar solicitud de afiliación'}
         </button>
       </form>
       <p className="acceso__alterna">
-        ¿Ya tienes cuenta? <Link to="/afiliadas/ingresar">Ingresar</Link>
+        ¿Ya registraste tu solicitud o eres afiliada activa?{' '}
+        <Link to="/afiliadas/ingresar">Ingresar al portal</Link>
       </p>
     </MarcoAcceso>
   )

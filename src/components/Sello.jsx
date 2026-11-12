@@ -28,8 +28,10 @@ export default function Sello({ imagen, descripcion }) {
         <path id="sello-abajo" d="M 28 200 A 172 172 0 0 0 372 200" />
       </defs>
 
-      <circle cx="200" cy="200" r="190" fill="var(--blanco)" />
-      <circle cx="200" cy="200" r="190" fill="none" stroke="var(--lila)" strokeWidth="18" />
+      <circle cx="200" cy="200" r="196" fill="none" stroke="var(--oro-claro)" strokeWidth="1.5" />
+      <circle cx="200" cy="200" r="186" fill="var(--blanco)" />
+      <circle cx="200" cy="200" r="186" fill="none" stroke="var(--lila)" strokeWidth="16" />
+      <circle cx="200" cy="200" r="177" fill="none" stroke="var(--oro)" strokeWidth="1" opacity="0.65" />
 
       <text className="sello__leyenda">
         <textPath href="#sello-arriba" startOffset="50%" textAnchor="middle">
@@ -38,11 +40,11 @@ export default function Sello({ imagen, descripcion }) {
       </text>
       <text className="sello__leyenda">
         <textPath href="#sello-abajo" startOffset="50%" textAnchor="middle">
-          Nuevo León · desde 1995
+          Nuevo León · A.C. · 1995
         </textPath>
       </text>
 
-      <path d={ONDA} fill="none" stroke="var(--tinta)" strokeWidth="1.4" />
+      <path d={ONDA} fill="none" stroke="var(--ciruela-profundo)" strokeWidth="1.5" />
       <image
         href={imagen}
         x="68"
@@ -52,7 +54,8 @@ export default function Sello({ imagen, descripcion }) {
         preserveAspectRatio="xMidYMid slice"
         clipPath="url(#sello-recorte)"
       />
-      <circle cx="200" cy="200" r="132" fill="none" stroke="var(--tinta)" strokeWidth="2.2" />
+      <circle cx="200" cy="200" r="132" fill="none" stroke="var(--ciruela-profundo)" strokeWidth="2.4" />
+      <circle cx="200" cy="200" r="128" fill="none" stroke="var(--oro-claro)" strokeWidth="1" opacity="0.85" />
     </svg>
   )
 }

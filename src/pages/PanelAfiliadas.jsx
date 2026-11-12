@@ -1,73 +1,115 @@
 import { useState } from 'react'
 import { useAuth } from '../auth/AuthContext.jsx'
 import Campo from '../components/Campo.jsx'
-import { actividades, areasDePractica, contacto } from '../data/colegio.js'
+import Icono from '../components/Icono.jsx'
+import { actividades, areasDePractica, avisosConsejo, contacto } from '../data/colegio.js'
 
 const PESTANAS = [
-  { id: 'resumen', texto: 'Resumen' },
-  { id: 'perfil', texto: 'Mis datos' },
-  { id: 'sesiones', texto: 'Sesiones' },
-  { id: 'directorio', texto: 'Directorio' },
+  { id: 'resumen', texto: 'Resumen y constancia' },
+  { id: 'perfil', texto: 'Expediente profesional' },
+  { id: 'sesiones', texto: 'Sesiones y agenda' },
+  { id: 'directorio', texto: 'Directorio colegiado' },
 ]
 
 const ESTADOS = {
-  en_revision: { texto: 'Solicitud en revisión', clase: 'estado--revision' },
-  activa: { texto: 'Afiliación activa', clase: 'estado--activa' },
+  en_revision: { texto: 'Solicitud en validación', clase: 'estado--revision' },
+  activa: { texto: 'Colegiada activa', clase: 'estado--activa' },
 }
 
 const fechaLarga = new Intl.DateTimeFormat('es-MX', { dateStyle: 'long' })
 
 function Resumen({ afiliada, irA }) {
   const reciente = actividades[0]
+  const folioCorto = afiliada.id.slice(0, 8).toUpperCase()
+
   return (
     <div className="panel__rejilla">
-      <article className="tarjeta">
-        <h2>Tu afiliación</h2>
+      <article className="tarjeta tarjeta--credencial">
+        <div className="credencial-encabezado">
+          <img src="/img/logo.jpg" alt="" width="48" height="48" />
+          <div>
+            <p className="credencial-encabezado__siglas">
+              {contacto.siglas} · Consejo {contacto.consejoActual}
+            </p>
+            <h2>Ficha de Colegiación</h2>
+          </div>
+        </div>
+
         <dl className="ficha">
           <div>
-            <dt>Estado</dt>
-            <dd>{ESTADOS[afiliada.estado]?.texto ?? afiliada.estado}</dd>
+            <dt>Titular</dt>
+            <dd className="ficha__destacado">Lic. {afiliada.nombre}</dd>
           </div>
           <div>
-            <dt>Solicitud enviada</dt>
-            <dd>{fechaLarga.format(new Date(afiliada.fechaRegistro))}</dd>
+            <dt>Folio de registro</dt>
+            <dd>CCJNL-{folioCorto}</dd>
           </div>
           <div>
             <dt>Cédula profesional</dt>
             <dd>{afiliada.cedula}</dd>
           </div>
           <div>
-            <dt>Área de práctica</dt>
+            <dt>Especialidad declarada</dt>
             <dd>{afiliada.area}</dd>
           </div>
+          <div>
+            <dt>Estatus estatutario</dt>
+            <dd>{ESTADOS[afiliada.estado]?.texto ?? afiliada.estado}</dd>
+          </div>
+          <div>
+            <dt>Fecha de solicitud</dt>
+            <dd>{fechaLarga.format(new Date(afiliada.fechaRegistro))}</dd>
+          </div>
         </dl>
+
         {afiliada.estado === 'en_revision' && (
           <p className="aviso">
-            El Consejo Directivo revisará tu solicitud y te avisará por correo cuando quede
-            activa.
+            Tu expediente fue recibido correctamente. La Secretaría y el Consejo Directivo
+            verificarán tus datos profesionales y te notificarán por correo electrónico cuando tu
+            membresía quede activa.
           </p>
         )}
+
         <button type="button" className="boton boton--linea" onClick={() => irA('perfil')}>
-          Actualizar mis datos
+          Actualizar mi expediente
         </button>
       </article>
 
       <article className="tarjeta">
-        <h2>Sesión más reciente</h2>
-        <p className="tarjeta__fecha">{reciente.fecha}</p>
-        <h3>{reciente.titulo}</h3>
+        <p className="antetitulo">Actividad destacada</p>
+        <h2>{reciente.titulo}</h2>
+        <p className="tarjeta__fecha">
+          <Icono nombre="calendario" tamano={15} /> {reciente.fecha}
+          {reciente.horario ? ` · ${reciente.horario}` : ''}
+        </p>
         <p>{reciente.texto}</p>
-        <button type="button" className="boton boton--linea" onClick={() => irA('sesiones')}>
-          Ver todas las sesiones
-        </button>
+        <p className="tarjeta__nota">
+          <Icono nombre="ubicacion" tamano={15} /> {reciente.sede}
+        </p>
+        <div className="tarjeta__acciones">
+          <button type="button" className="boton boton--linea" onClick={() => irA('sesiones')}>
+            Ver agenda completa
+          </button>
+          <a className="boton" href={`tel:${contacto.telefonoEnlace}`}>
+            Confirmar asistencia
+          </a>
+        </div>
       </article>
 
       <article className="tarjeta tarjeta--ancha">
-        <h2>Avisos del Consejo Directivo</h2>
-        <p className="vacio">
-          Aún no hay avisos. Cuando el Consejo publique una convocatoria o un comunicado,
-          aparecerá aquí.
-        </p>
+        <h2>Comunicados del Consejo Directivo {contacto.consejoActual}</h2>
+        <ul className="comunicados">
+          {avisosConsejo.map((aviso) => (
+            <li key={aviso.id} className="comunicado">
+              <div className="comunicado__meta">
+                <span className="comunicado__etiqueta">{aviso.etiqueta}</span>
+                <span>{aviso.fecha}</span>
+              </div>
+              <h3>{aviso.titulo}</h3>
+              <p>{aviso.texto}</p>
+            </li>
+          ))}
+        </ul>
       </article>
     </div>
   )
@@ -111,7 +153,7 @@ function Perfil({ afiliada }) {
     setGuardando(true)
     try {
       await actualizarPerfil(valores)
-      setMensaje({ tipo: 'exito', texto: 'Datos guardados.' })
+      setMensaje({ tipo: 'exito', texto: 'Tu expediente profesional ha sido actualizado.' })
     } catch (error) {
       setMensaje({ tipo: 'error', texto: error.message })
     } finally {
@@ -121,28 +163,35 @@ function Perfil({ afiliada }) {
 
   return (
     <article className="tarjeta tarjeta--forma">
-      <h2>Mis datos</h2>
+      <div>
+        <p className="antetitulo">Padrón de Socias</p>
+        <h2>Expediente profesional</h2>
+        <p className="tarjeta__nota">
+          Mantén al día tus datos de contacto y especialidad para recibir convocatorias y participar
+          en las comisiones de estudio del Colegio.
+        </p>
+      </div>
       <form className="forma" onSubmit={alGuardar} noValidate>
-        <Campo etiqueta="Nombre completo" autoComplete="name" {...enlazar('nombre')} />
+        <Campo etiqueta="Nombre completo (como aparece en tu título)" autoComplete="name" {...enlazar('nombre')} />
         <Campo
-          etiqueta="Correo electrónico"
+          etiqueta="Correo electrónico registrado"
           type="email"
           value={afiliada.correo}
           readOnly
-          ayuda="Para cambiar tu correo, escribe al Colegio."
+          ayuda="Para solicitar cambio de correo institucional, escribe a la Secretaría del Colegio."
         />
         <div className="forma__par">
-          <Campo etiqueta="Teléfono" type="tel" autoComplete="tel" {...enlazar('telefono')} />
+          <Campo etiqueta="Teléfono móvil (10 dígitos)" type="tel" autoComplete="tel" {...enlazar('telefono')} />
           <Campo etiqueta="Cédula profesional" inputMode="numeric" {...enlazar('cedula')} />
         </div>
-        <Campo etiqueta="Área de práctica" opciones={areasDePractica} {...enlazar('area')} />
+        <Campo etiqueta="Rama principal de práctica jurídica" opciones={areasDePractica} {...enlazar('area')} />
         {mensaje && (
           <p className={`aviso aviso--${mensaje.tipo}`} role="status">
             {mensaje.texto}
           </p>
         )}
         <button className="boton" type="submit" disabled={guardando}>
-          {guardando ? 'Guardando…' : 'Guardar cambios'}
+          {guardando ? 'Guardando cambios…' : 'Guardar expediente'}
         </button>
       </form>
     </article>
@@ -152,21 +201,29 @@ function Perfil({ afiliada }) {
 function Sesiones() {
   return (
     <article className="tarjeta">
-      <h2>Sesiones y actividades</h2>
+      <div>
+        <p className="antetitulo">Registro Académico e Institucional</p>
+        <h2>Sesiones ordinarias y actividades del Colegio</h2>
+      </div>
       <ul className="sesiones">
         {actividades.map((a) => (
-          <li key={a.titulo}>
+          <li key={a.id}>
             <img src={a.imagen} alt="" loading="lazy" />
-            <div>
-              <p className="tarjeta__fecha">{a.fecha}</p>
+            <div className="sesiones__info">
+              <p className="tarjeta__fecha">
+                {a.categoria} · {a.fecha} {a.horario ? `(${a.horario})` : ''}
+              </p>
               <h3>{a.titulo}</h3>
               <p>{a.texto}</p>
+              <p className="sesiones__sede">
+                <Icono nombre="ubicacion" tamano={14} /> {a.sede}
+              </p>
             </div>
           </li>
         ))}
       </ul>
       <p className="tarjeta__nota">
-        Para confirmar tu asistencia a una sesión, llama al{' '}
+        Para confirmar tu asistencia protocolaria a la próxima sesión ordinaria, comunícate al{' '}
         <a href={`tel:${contacto.telefonoEnlace}`}>{contacto.telefono}</a> o escribe a{' '}
         <a href={`mailto:${contacto.correo}`}>{contacto.correo}</a>.
       </p>
@@ -177,11 +234,20 @@ function Sesiones() {
 function Directorio() {
   return (
     <article className="tarjeta">
-      <h2>Directorio de afiliadas</h2>
-      <p className="vacio">
-        El directorio estará disponible próximamente. Aquí podrás buscar a tus colegas por
-        nombre y área de práctica.
-      </p>
+      <div>
+        <p className="antetitulo">Red Gremial</p>
+        <h2>Directorio de colegiadas por especialidad</h2>
+      </div>
+      <div className="vacio">
+        <p>
+          <strong>Padrón digital en proceso de integración ({contacto.consejoActual}).</strong>
+        </p>
+        <p>
+          Una vez concluida la validación de expedientes activos por parte de la Secretaría, en esta
+          sección podrás consultar a tus colegas por rama de especialidad para colaboración
+          profesional y referenciación ética.
+        </p>
+      </div>
     </article>
   )
 }
@@ -196,11 +262,12 @@ export default function PanelAfiliadas() {
     <section className="panel">
       <div className="panel__cabeza">
         <div className="contenedor">
+          <p className="antetitulo">Portal de Colegiadas · {contacto.siglas}</p>
           <div className="panel__saludo">
-            <h1>Bienvenida, {primerNombre}</h1>
+            <h1>Bienvenida, Lic. {primerNombre}</h1>
             {estado && <span className={`estado ${estado.clase}`}>{estado.texto}</span>}
           </div>
-          <div className="pestanas" role="tablist" aria-label="Espacio de afiliadas">
+          <div className="pestanas" role="tablist" aria-label="Secciones del espacio de afiliadas">
             {PESTANAS.map((p) => (
               <button
                 key={p.id}

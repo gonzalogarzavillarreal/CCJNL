@@ -34,7 +34,10 @@ export default function Ingresar() {
   }
 
   return (
-    <MarcoAcceso titulo="Ingresar" entrada="Entra con el correo que registraste en el Colegio.">
+    <MarcoAcceso
+      titulo="Acceso al portal"
+      entrada="Ingresa con el correo electrónico registrado en tu expediente de afiliación."
+    >
       <form className="forma" onSubmit={alEnviar} noValidate>
         {error && (
           <p className="aviso aviso--error" role="alert">
@@ -45,6 +48,7 @@ export default function Ingresar() {
           etiqueta="Correo electrónico"
           type="email"
           autoComplete="email"
+          placeholder="licenciada@ejemplo.com"
           value={correo}
           onChange={(e) => setCorreo(e.target.value)}
         />
@@ -56,11 +60,12 @@ export default function Ingresar() {
           onChange={(e) => setContrasena(e.target.value)}
         />
         <button className="boton boton--ancho" type="submit" disabled={enviando}>
-          {enviando ? 'Ingresando…' : 'Ingresar'}
+          {enviando ? 'Verificando credenciales…' : 'Ingresar a mi espacio'}
         </button>
       </form>
       <p className="acceso__alterna">
-        ¿Aún no tienes cuenta? <Link to="/afiliadas/registro">Solicita tu afiliación</Link>
+        ¿Aún no eres integrante del Colegio?{' '}
+        <Link to="/afiliadas/registro">Inicia tu solicitud de afiliación</Link>
       </p>
     </MarcoAcceso>
   )

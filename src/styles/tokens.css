@@ -1,50 +1,66 @@
 /*
-  Paleta del Colegio de Ciencias Jurídicas en Nuevo León, A.C.
-  Tomada del logo: anillo lila, trazo de tinta del monograma y fondo
-  blanco-lila. El ciruela y el oro vienen de los carteles del Colegio.
+  Paleta institucional del Colegio de Ciencias Jurídicas en Nuevo León, A.C.
+  Inspirada en el sello oficial (anillo lila, monograma de tinta y papel marfil)
+  y en la identidad ceremonial del Colegio (ciruela profundo y filetes en oro antiguo).
 */
 :root {
   /* Marca */
-  --lila: #a583c4; /* anillo del logo */
-  --lila-suave: #cdb8e0;
-  --lila-claro: #ebe2f3;
-  --lila-papel: #f8f4fb; /* fondo del logo */
-  --ciruela: #4a2a6b; /* títulos y acciones */
-  --ciruela-profundo: #2c1742;
-  --tinta: #1e1826; /* trazo del monograma */
-  --oro: #a37b2c; /* acento de los carteles, uso mínimo */
+  --lila: #9c76bf;
+  --lila-suave: #cbb5e0;
+  --lila-claro: #efe8f6;
+  --lila-bruma: #f5f0fa;
+  --lila-papel: #fbf9fd;
+  --ciruela: #462569;
+  --ciruela-medio: #5c3486;
+  --ciruela-profundo: #241238;
+  --ciruela-noche: #190c28;
+  --tinta: #1d1626;
+  --oro: #a67c2e;
+  --oro-claro: #cfb06b;
+  --oro-suave: #f8f2e4;
   --blanco: #ffffff;
 
-  /* Roles */
+  /* Roles semánticos */
   --fondo: var(--lila-papel);
   --superficie: var(--blanco);
+  --superficie-alt: var(--lila-bruma);
   --texto: var(--tinta);
-  --texto-suave: #564c63;
-  --borde: #dccfe8;
+  --texto-suave: #534862;
+  --texto-tenue: #6f637f;
+  --borde: #dfd3ec;
+  --borde-fuerte: #c9b5de;
   --accion: var(--ciruela);
   --accion-hover: var(--ciruela-profundo);
-  --error: #a3243b;
-  --exito: #24643f;
+  --error: #9e2238;
+  --exito: #1f633d;
 
   /* Tipografía */
-  --fuente-titulo: 'Cormorant Garamond', 'Times New Roman', serif;
-  --fuente-texto: 'Mulish', system-ui, sans-serif;
+  --fuente-titulo: 'Cormorant Garamond', 'Georgia', 'Times New Roman', serif;
+  --fuente-texto: 'Mulish', system-ui, -apple-system, sans-serif;
 
+  --t-2xs: 0.75rem;
   --t-xs: 0.8125rem;
   --t-s: 0.9375rem;
-  --t-m: 1.0625rem;
-  --t-l: 1.375rem;
-  --t-xl: 1.875rem;
-  --t-2xl: 2.625rem;
-  --t-3xl: clamp(2.75rem, 6vw, 4.5rem);
+  --t-m: 1.05rem;
+  --t-l: 1.25rem;
+  --t-xl: 1.625rem;
+  --t-2xl: clamp(2rem, 3.6vw, 2.85rem);
+  --t-3xl: clamp(2.65rem, 5.2vw, 4.25rem);
 
-  /* Espacio y forma */
+  /* Espacio, radios y elevación */
   --e-1: 0.5rem;
   --e-2: 1rem;
   --e-3: 1.5rem;
   --e-4: 2.5rem;
   --e-5: 4rem;
-  --e-6: 6.5rem;
-  --radio: 6px;
-  --ancho: 72rem;
+  --e-6: 6rem;
+  --radio-sm: 6px;
+  --radio: 10px;
+  --radio-lg: 16px;
+  --radio-xl: 22px;
+  --ancho: 76rem;
+
+  --sombra-sutil: 0 2px 10px rgb(36 18 56 / 0.05);
+  --sombra-media: 0 12px 32px -8px rgb(36 18 56 / 0.1);
+  --sombra-elevada: 0 24px 54px -14px rgb(36 18 56 / 0.2);
 }

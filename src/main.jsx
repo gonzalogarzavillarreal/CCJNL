@@ -7,6 +7,7 @@ import './styles/tokens.css'
 import './styles/base.css'
 import './styles/sitio.css'
 import './styles/afiliadas.css'
+import './styles/admin.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

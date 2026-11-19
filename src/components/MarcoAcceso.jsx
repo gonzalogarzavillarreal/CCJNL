@@ -2,7 +2,7 @@ import Icono from './Icono.jsx'
 import { contacto } from '../data/colegio.js'
 
 // Marco compartido por las pantallas de ingreso y solicitud de afiliación.
-export default function MarcoAcceso({ titulo, entrada, children }) {
+export default function MarcoAcceso({ titulo, entrada, antetitulo = 'Espacio de Colegiadas', children }) {
   return (
     <section className="acceso">
       <div className="contenedor acceso__fila">
@@ -43,7 +43,7 @@ export default function MarcoAcceso({ titulo, entrada, children }) {
         </aside>
 
         <div className="acceso__forma">
-          <p className="antetitulo">Espacio de Colegiadas</p>
+          <p className="antetitulo">{antetitulo}</p>
           <h1>{titulo}</h1>
           <p className="acceso__entrada">{entrada}</p>
           {children}

@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { useAuth } from '../auth/AuthContext.jsx'
 import Campo from '../components/Campo.jsx'
 import Icono from '../components/Icono.jsx'
-import { actividades, areasDePractica, avisosConsejo, contacto } from '../data/colegio.js'
+import usePublicaciones from '../hooks/usePublicaciones.js'
+import { clasificar, fechaLegible } from '../services/publicacionesService.js'
+import { areasDePractica, contacto } from '../data/colegio.js'
 
 const PESTANAS = [
   { id: 'resumen', texto: 'Resumen y constancia' },
@@ -18,8 +20,9 @@ const ESTADOS = {
 
 const fechaLarga = new Intl.DateTimeFormat('es-MX', { dateStyle: 'long' })
 
-function Resumen({ afiliada, irA }) {
-  const reciente = actividades[0]
+function Resumen({ afiliada, agenda, irA }) {
+  // La más cercana por venir; si no hay ninguna anunciada, la última realizada.
+  const reciente = agenda.proximas[0] ?? agenda.pasadas[0]
   const folioCorto = afiliada.id.slice(0, 8).toUpperCase()
 
   return (
@@ -75,42 +78,52 @@ function Resumen({ afiliada, irA }) {
         </button>
       </article>
 
-      <article className="tarjeta">
-        <p className="antetitulo">Actividad destacada</p>
-        <h2>{reciente.titulo}</h2>
-        <p className="tarjeta__fecha">
-          <Icono nombre="calendario" tamano={15} /> {reciente.fecha}
-          {reciente.horario ? ` · ${reciente.horario}` : ''}
-        </p>
-        <p>{reciente.texto}</p>
-        <p className="tarjeta__nota">
-          <Icono nombre="ubicacion" tamano={15} /> {reciente.sede}
-        </p>
-        <div className="tarjeta__acciones">
-          <button type="button" className="boton boton--linea" onClick={() => irA('sesiones')}>
-            Ver agenda completa
-          </button>
-          <a className="boton" href={`tel:${contacto.telefonoEnlace}`}>
-            Confirmar asistencia
-          </a>
-        </div>
-      </article>
+      {reciente && (
+        <article className="tarjeta">
+          <p className="antetitulo">
+            {agenda.proximas.length > 0 ? 'Próxima actividad' : 'Actividad destacada'}
+          </p>
+          <h2>{reciente.titulo}</h2>
+          <p className="tarjeta__fecha">
+            <Icono nombre="calendario" tamano={15} /> {fechaLegible(reciente)}
+            {reciente.horario ? ` · ${reciente.horario}` : ''}
+          </p>
+          <p>{reciente.texto}</p>
+          {reciente.sede && (
+            <p className="tarjeta__nota">
+              <Icono nombre="ubicacion" tamano={15} /> {reciente.sede}
+            </p>
+          )}
+          <div className="tarjeta__acciones">
+            <button type="button" className="boton boton--linea" onClick={() => irA('sesiones')}>
+              Ver agenda completa
+            </button>
+            <a className="boton" href={`tel:${contacto.telefonoEnlace}`}>
+              Confirmar asistencia
+            </a>
+          </div>
+        </article>
+      )}
 
-      <article className="tarjeta tarjeta--ancha">
-        <h2>Comunicados del Consejo Directivo {contacto.consejoActual}</h2>
-        <ul className="comunicados">
-          {avisosConsejo.map((aviso) => (
-            <li key={aviso.id} className="comunicado">
-              <div className="comunicado__meta">
-                <span className="comunicado__etiqueta">{aviso.etiqueta}</span>
-                <span>{aviso.fecha}</span>
-              </div>
-              <h3>{aviso.titulo}</h3>
-              <p>{aviso.texto}</p>
-            </li>
-          ))}
-        </ul>
-      </article>
+      {agenda.comunicados.length > 0 && (
+        <article className="tarjeta tarjeta--ancha">
+          <h2>Comunicados del Consejo Directivo {contacto.consejoActual}</h2>
+          <ul className="comunicados">
+            {agenda.comunicados.map((aviso) => (
+              <li key={aviso.id} className="comunicado">
+                <div className="comunicado__meta">
+                  <span className="comunicado__etiqueta">
+                    {aviso.etiqueta ?? 'Consejo Directivo'}
+                  </span>
+                  <span>{fechaLegible(aviso)}</span>
+                </div>
+                <h3>{aviso.titulo}</h3>
+                <p>{aviso.texto}</p>
+              </li>
+            ))}
+          </ul>
+        </article>
+      )}
     </div>
   )
 }
@@ -198,7 +211,8 @@ function Perfil({ afiliada }) {
   )
 }
 
-function Sesiones() {
+function Sesiones({ agenda }) {
+  const todas = [...agenda.proximas, ...agenda.pasadas]
   return (
     <article className="tarjeta">
       <div>
@@ -206,18 +220,21 @@ function Sesiones() {
         <h2>Sesiones ordinarias y actividades del Colegio</h2>
       </div>
       <ul className="sesiones">
-        {actividades.map((a) => (
+        {todas.map((a) => (
           <li key={a.id}>
-            <img src={a.imagen} alt="" loading="lazy" />
+            <img src={a.imagen || '/img/logo.jpg'} alt="" loading="lazy" />
             <div className="sesiones__info">
               <p className="tarjeta__fecha">
-                {a.categoria} · {a.fecha} {a.horario ? `(${a.horario})` : ''}
+                {agenda.proximas.includes(a) ? 'Próxima · ' : ''}
+                {a.tipo} · {fechaLegible(a)} {a.horario ? `(${a.horario})` : ''}
               </p>
               <h3>{a.titulo}</h3>
               <p>{a.texto}</p>
-              <p className="sesiones__sede">
-                <Icono nombre="ubicacion" tamano={14} /> {a.sede}
-              </p>
+              {a.sede && (
+                <p className="sesiones__sede">
+                  <Icono nombre="ubicacion" tamano={14} /> {a.sede}
+                </p>
+              )}
             </div>
           </li>
         ))}
@@ -255,6 +272,8 @@ function Directorio() {
 export default function PanelAfiliadas() {
   const { afiliada } = useAuth()
   const [pestana, setPestana] = useState('resumen')
+  const { publicaciones } = usePublicaciones()
+  const agenda = clasificar(publicaciones)
   const estado = ESTADOS[afiliada.estado]
   const primerNombre = afiliada.nombre.split(' ')[0]
 
@@ -292,9 +311,9 @@ export default function PanelAfiliadas() {
         role="tabpanel"
         aria-labelledby={`pestana-${pestana}`}
       >
-        {pestana === 'resumen' && <Resumen afiliada={afiliada} irA={setPestana} />}
+        {pestana === 'resumen' && <Resumen afiliada={afiliada} agenda={agenda} irA={setPestana} />}
         {pestana === 'perfil' && <Perfil afiliada={afiliada} />}
-        {pestana === 'sesiones' && <Sesiones />}
+        {pestana === 'sesiones' && <Sesiones agenda={agenda} />}
         {pestana === 'directorio' && <Directorio />}
       </div>
     </section>

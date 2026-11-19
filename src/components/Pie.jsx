@@ -68,6 +68,9 @@ export default function Pie() {
               <Link to="/afiliadas/ingresar">Portal de afiliadas</Link>
             </li>
             <li>
+              <Link to="/admin">Administración del sitio</Link>
+            </li>
+            <li>
               <a href="/#preguntas">Preguntas frecuentes</a>
             </li>
           </ul>

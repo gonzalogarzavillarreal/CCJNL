@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom'
 import Icono from '../components/Icono.jsx'
 import Sello from '../components/Sello.jsx'
 import { useAuth } from '../auth/AuthContext.jsx'
+import usePublicaciones from '../hooks/usePublicaciones.js'
+import { clasificar, fechaLegible, partesDeFecha } from '../services/publicacionesService.js'
 import {
-  actividades,
   afiliacion,
   areasDePractica,
   cifras,
@@ -16,17 +17,17 @@ import {
   vinculacion,
 } from '../data/colegio.js'
 
-const CATEGORIAS = ['Todas', 'Sesión ordinaria', 'Vida institucional', 'Conmemoración']
-
 export default function Inicio() {
   const { afiliada } = useAuth()
   const [categoriaActiva, setCategoriaActiva] = useState('Todas')
   const [actividadAbierta, setActividadAbierta] = useState(null)
 
-  const actividadesFiltradas =
-    categoriaActiva === 'Todas'
-      ? actividades
-      : actividades.filter((a) => a.categoria === categoriaActiva)
+  const { publicaciones } = usePublicaciones()
+  const { proximas, pasadas } = clasificar(publicaciones)
+  const categorias = ['Todas', ...new Set(pasadas.map((a) => a.tipo))]
+  const actividadesFiltradas = pasadas.filter(
+    (a) => categoriaActiva === 'Todas' || a.tipo === categoriaActiva,
+  )
 
   useEffect(() => {
     if (!actividadAbierta) return undefined
@@ -233,8 +234,59 @@ export default function Inicio() {
             </p>
           </header>
 
+          {proximas.length > 0 && (
+            <div className="proximas">
+              <p className="subtitulo-bloque">Próximas actividades y convocatorias</p>
+              <ul className="proximas__lista">
+                {proximas.map((p) => {
+                  const { dia, mes, anio } = partesDeFecha(p.fecha)
+                  return (
+                    <li key={p.id} className="proxima">
+                      <time className="proxima__fecha" dateTime={p.fecha}>
+                        <span className="proxima__dia">{dia}</span>
+                        <span className="proxima__mes">
+                          {mes} {anio}
+                        </span>
+                      </time>
+                      <div className="proxima__texto">
+                        <span className="comunicado__etiqueta">{p.tipo}</span>
+                        <h3>{p.titulo}</h3>
+                        <p>{p.texto}</p>
+                        <div className="actividad__meta">
+                          {p.horario && (
+                            <span>
+                              <Icono nombre="reloj" tamano={15} />
+                              {p.horario}
+                            </span>
+                          )}
+                          {p.sede && (
+                            <span>
+                              <Icono nombre="ubicacion" tamano={15} />
+                              {p.sede}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      {p.imagen && (
+                        <button
+                          type="button"
+                          className="proxima__cartel"
+                          onClick={() => setActividadAbierta(p)}
+                          aria-label={`Ampliar cartel de ${p.titulo}`}
+                        >
+                          <img src={p.imagen} alt="" loading="lazy" />
+                        </button>
+                      )}
+                    </li>
+                  )
+                })}
+              </ul>
+              <p className="subtitulo-bloque">Actividades realizadas</p>
+            </div>
+          )}
+
           <div className="filtros" role="group" aria-label="Filtrar actividades por categoría">
-            {CATEGORIAS.map((cat) => (
+            {categorias.map((cat) => (
               <button
                 key={cat}
                 type="button"
@@ -250,25 +302,32 @@ export default function Inicio() {
           <ul className="actividades">
             {actividadesFiltradas.map((a) => (
               <li key={a.id} className="actividad">
-                <button
-                  type="button"
-                  className="actividad__media"
-                  onClick={() => setActividadAbierta(a)}
-                  aria-label={`Ampliar imagen de ${a.titulo}`}
-                >
-                  <img src={a.imagen} alt={a.alt} loading="lazy" />
-                  <span className="actividad__insignia">{a.categoria}</span>
-                  <span className="actividad__zoom" aria-hidden="true">
-                    <Icono nombre="ampliar" tamano={16} />
-                    Ver completo
-                  </span>
-                </button>
+                {a.imagen ? (
+                  <button
+                    type="button"
+                    className="actividad__media"
+                    onClick={() => setActividadAbierta(a)}
+                    aria-label={`Ampliar imagen de ${a.titulo}`}
+                  >
+                    <img src={a.imagen} alt={a.alt ?? a.titulo} loading="lazy" />
+                    <span className="actividad__insignia">{a.tipo}</span>
+                    <span className="actividad__zoom" aria-hidden="true">
+                      <Icono nombre="ampliar" tamano={16} />
+                      Ver completo
+                    </span>
+                  </button>
+                ) : (
+                  <div className="actividad__media actividad__media--vacia">
+                    <span className="actividad__insignia">{a.tipo}</span>
+                    <img src="/img/logo.jpg" alt="" />
+                  </div>
+                )}
 
                 <div className="actividad__texto">
                   <div className="actividad__meta">
                     <span>
                       <Icono nombre="calendario" tamano={15} />
-                      {a.fecha}
+                      {fechaLegible(a)}
                     </span>
                     {a.horario && (
                       <span>
@@ -279,10 +338,12 @@ export default function Inicio() {
                   </div>
                   <h3>{a.titulo}</h3>
                   <p>{a.texto}</p>
-                  <p className="actividad__sede">
-                    <Icono nombre="ubicacion" tamano={15} />
-                    <span>{a.sede}</span>
-                  </p>
+                  {a.sede && (
+                    <p className="actividad__sede">
+                      <Icono nombre="ubicacion" tamano={15} />
+                      <span>{a.sede}</span>
+                    </p>
+                  )}
                 </div>
               </li>
             ))}
@@ -475,20 +536,22 @@ export default function Inicio() {
               <Icono nombre="cerrar" tamano={20} />
             </button>
             <div className="visor__imagen">
-              <img src={actividadAbierta.imagen} alt={actividadAbierta.alt} />
+              <img src={actividadAbierta.imagen} alt={actividadAbierta.alt ?? actividadAbierta.titulo} />
             </div>
             <div className="visor__detalle">
-              <span className="visor__categoria">{actividadAbierta.categoria}</span>
+              <span className="visor__categoria">{actividadAbierta.tipo}</span>
               <h3 id="visor-titulo">{actividadAbierta.titulo}</h3>
               <p className="visor__fecha">
-                {actividadAbierta.fecha}
+                {fechaLegible(actividadAbierta)}
                 {actividadAbierta.horario ? ` · ${actividadAbierta.horario}` : ''}
               </p>
               <p>{actividadAbierta.texto}</p>
-              <p className="visor__sede">
-                <Icono nombre="ubicacion" tamano={16} />
-                <span>{actividadAbierta.sede}</span>
-              </p>
+              {actividadAbierta.sede && (
+                <p className="visor__sede">
+                  <Icono nombre="ubicacion" tamano={16} />
+                  <span>{actividadAbierta.sede}</span>
+                </p>
+              )}
             </div>
           </div>
         </div>

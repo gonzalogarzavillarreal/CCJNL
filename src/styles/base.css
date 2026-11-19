@@ -245,7 +245,8 @@ a:hover {
   color: var(--ciruela-profundo);
 }
 .campo input,
-.campo select {
+.campo select,
+.campo textarea {
   width: 100%;
   min-height: 2.95rem;
   padding: 0.6rem 0.9rem;
@@ -263,18 +264,25 @@ a:hover {
   background: var(--superficie-alt);
   color: var(--texto-suave);
 }
+.campo textarea {
+  resize: vertical;
+  line-height: 1.55;
+}
 .campo input:hover:not([readonly]),
-.campo select:hover {
+.campo select:hover,
+.campo textarea:hover {
   border-color: var(--lila);
 }
 .campo input:focus-visible,
-.campo select:focus-visible {
+.campo select:focus-visible,
+.campo textarea:focus-visible {
   outline: none;
   border-color: var(--ciruela);
   box-shadow: 0 0 0 3px rgb(156 118 191 / 0.22);
 }
 .campo input[aria-invalid='true'],
-.campo select[aria-invalid='true'] {
+.campo select[aria-invalid='true'],
+.campo textarea[aria-invalid='true'] {
   border-color: var(--error);
 }
 .campo .ayuda {

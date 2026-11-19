@@ -1,7 +1,7 @@
 import { useId } from 'react'
 
 // Campo de formulario con etiqueta, ayuda y error enlazados para lectores de pantalla.
-export default function Campo({ etiqueta, ayuda, error, opciones, ...props }) {
+export default function Campo({ etiqueta, ayuda, error, opciones, multilinea, ...props }) {
   const id = useId()
   const descripcion = [ayuda && `${id}-ayuda`, error && `${id}-error`].filter(Boolean).join(' ')
   const comunes = {
@@ -23,6 +23,8 @@ export default function Campo({ etiqueta, ayuda, error, opciones, ...props }) {
             </option>
           ))}
         </select>
+      ) : multilinea ? (
+        <textarea rows={5} {...comunes} />
       ) : (
         <input {...comunes} />
       )}

@@ -7,6 +7,8 @@ import Inicio from './pages/Inicio.jsx'
 import Ingresar from './pages/Ingresar.jsx'
 import Registro from './pages/Registro.jsx'
 import PanelAfiliadas from './pages/PanelAfiliadas.jsx'
+import IngresarAdmin from './pages/IngresarAdmin.jsx'
+import PanelAdmin from './pages/PanelAdmin.jsx'
 import NoEncontrada from './pages/NoEncontrada.jsx'
 
 export default function App() {
@@ -27,6 +29,15 @@ export default function App() {
             element={
               <RutaProtegida>
                 <PanelAfiliadas />
+              </RutaProtegida>
+            }
+          />
+          <Route path="/admin/ingresar" element={<IngresarAdmin />} />
+          <Route
+            path="/admin"
+            element={
+              <RutaProtegida admin>
+                <PanelAdmin />
               </RutaProtegida>
             }
           />

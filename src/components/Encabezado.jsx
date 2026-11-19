@@ -14,7 +14,7 @@ const SECCIONES = [
 ]
 
 export default function Encabezado() {
-  const { afiliada, salir } = useAuth()
+  const { afiliada, admin, salir } = useAuth()
   const [abierto, setAbierto] = useState(false)
   const navigate = useNavigate()
 
@@ -114,6 +114,11 @@ export default function Encabezado() {
             ))}
           </ul>
           <div className="nav__acciones">
+            {admin && (
+              <Link className="boton boton--linea" to="/admin" onClick={cerrarMenu}>
+                Administración
+              </Link>
+            )}
             {afiliada ? (
               <>
                 <Link className="boton" to="/afiliadas" onClick={cerrarMenu}>

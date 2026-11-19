@@ -1,17 +1,22 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import * as servicio from '../services/afiliadasService.js'
+import * as publicaciones from '../services/publicacionesService.js'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [afiliada, setAfiliada] = useState(null)
+  const [admin, setAdmin] = useState(null)
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
     let vigente = true
-    servicio
-      .obtenerSesion()
-      .then((sesion) => vigente && setAfiliada(sesion))
+    Promise.all([servicio.obtenerSesion(), publicaciones.obtenerSesionAdmin()])
+      .then(([sesion, sesionAdmin]) => {
+        if (!vigente) return
+        setAfiliada(sesion)
+        setAdmin(sesionAdmin)
+      })
       .finally(() => vigente && setCargando(false))
     return () => {
       vigente = false
@@ -38,9 +43,28 @@ export function AuthProvider({ children }) {
     setAfiliada(null)
   }, [])
 
+  const ingresarAdmin = useCallback(async (usuario, contrasena) => {
+    setAdmin(await publicaciones.iniciarSesionAdmin(usuario, contrasena))
+  }, [])
+
+  const salirAdmin = useCallback(async () => {
+    await publicaciones.cerrarSesionAdmin()
+    setAdmin(null)
+  }, [])
+
   const valor = useMemo(
-    () => ({ afiliada, cargando, ingresar, registrar, actualizarPerfil, salir }),
-    [afiliada, cargando, ingresar, registrar, actualizarPerfil, salir],
+    () => ({
+      afiliada,
+      admin,
+      cargando,
+      ingresar,
+      registrar,
+      actualizarPerfil,
+      salir,
+      ingresarAdmin,
+      salirAdmin,
+    }),
+    [afiliada, admin, cargando, ingresar, registrar, actualizarPerfil, salir, ingresarAdmin, salirAdmin],
   )
 
   return <AuthContext.Provider value={valor}>{children}</AuthContext.Provider>

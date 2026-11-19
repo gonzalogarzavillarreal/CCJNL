@@ -170,9 +170,12 @@ export const trayectoria = [
   },
 ]
 
+// Contenido inicial de las publicaciones: el panel de administración parte de esta lista
+// (ver services/publicacionesService.js). fechaISO ordena y separa próximas de pasadas.
 export const actividades = [
   {
     id: 'conferencia-ieepcnl',
+    fechaISO: '2026-11-09',
     categoria: 'Sesión ordinaria',
     imagen: '/img/conferencia-ieepcnl.jpg',
     alt: 'Convocatoria oficial de la conferencia “El Instituto Electoral: garante de la democracia y la participación ciudadana” en el IEEPCNL',
@@ -185,6 +188,7 @@ export const actividades = [
   },
   {
     id: 'nueva-etapa',
+    fechaISO: '2026-10-19',
     categoria: 'Vida institucional',
     imagen: '/img/nueva-etapa.jpg',
     alt: 'Conmemoración del primer año de gestión del Consejo Directivo 2025–2027 del CCJNL',
@@ -197,6 +201,7 @@ export const actividades = [
   },
   {
     id: 'sesion-agosto',
+    fechaISO: '2026-08-10',
     categoria: 'Sesión ordinaria',
     imagen: '/img/sesion-agosto.jpg',
     alt: 'Cartel oficial de la sesión ordinaria de agosto en el H. Congreso del Estado con la Dip. Itzel Soledad Castillo Almanza',
@@ -209,6 +214,7 @@ export const actividades = [
   },
   {
     id: 'dia-abogacia-evento',
+    fechaISO: '2026-07-12',
     categoria: 'Vida institucional',
     imagen: '/img/dia-abogacia-evento.jpg',
     alt: 'Integrantes e invitados especiales en la ceremonia del Día de la Abogacía 2026 del Colegio de Ciencias Jurídicas en Nuevo León',
@@ -221,6 +227,7 @@ export const actividades = [
   },
   {
     id: 'sesion-marzo',
+    fechaISO: '2026-03-01',
     categoria: 'Sesión ordinaria',
     imagen: '/img/sesion-marzo.jpg',
     alt: 'Presídium de cinco ponentes durante la sesión ordinaria de marzo de 2026 con UDEM y CEDHNL',
@@ -233,6 +240,7 @@ export const actividades = [
   },
   {
     id: 'dia-abogacia',
+    fechaISO: '2026-07-12',
     categoria: 'Conmemoración',
     imagen: '/img/dia-abogacia.jpg',
     alt: 'Pronunciamiento institucional del CCJNL por el Día de la Abogacía',
@@ -245,6 +253,7 @@ export const actividades = [
   },
   {
     id: 'votacion-femenina',
+    fechaISO: '2026-07-03',
     categoria: 'Conmemoración',
     imagen: '/img/votacion-femenina.jpg',
     alt: 'Cartel conmemorativo del 3 de julio, Día de la Votación Femenina en México',
